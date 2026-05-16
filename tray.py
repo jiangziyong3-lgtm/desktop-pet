@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QSystemTrayIcon, QMenu, QApplication
 from PySide6.QtGui import QIcon, QPixmap, QPainter, QColor, QAction
 from PySide6.QtCore import Qt
 
+from i18n import _
+
 
 def _build_tray_icon() -> QIcon:
     """手绘像素小机器人托盘图标"""
@@ -44,7 +46,7 @@ class TrayManager:
 
         self.icon = _build_tray_icon()
         self.tray = QSystemTrayIcon(self.icon, app)
-        self.tray.setToolTip("桌面宠物")
+        self.tray.setToolTip(_("app_name"))
 
         self._build_menu()
         self.tray.show()
@@ -52,27 +54,27 @@ class TrayManager:
     def _build_menu(self):
         menu = QMenu()
 
-        show_action = QAction("显示宠物", menu)
+        show_action = QAction(_("show_pet"), menu)
         show_action.triggered.connect(self.pet.show)
         menu.addAction(show_action)
 
-        hide_action = QAction("隐藏宠物", menu)
+        hide_action = QAction(_("hide_pet"), menu)
         hide_action.triggered.connect(self.pet.hide)
         menu.addAction(hide_action)
 
         menu.addSeparator()
 
-        feed_action = QAction("喂食", menu)
+        feed_action = QAction(_("feed"), menu)
         feed_action.triggered.connect(self.pet.feed_requested.emit)
         menu.addAction(feed_action)
 
-        sleep_action = QAction("睡觉", menu)
+        sleep_action = QAction(_("sleep"), menu)
         sleep_action.triggered.connect(self.pet.sleep_requested.emit)
         menu.addAction(sleep_action)
 
         menu.addSeparator()
 
-        quit_action = QAction("退出", menu)
+        quit_action = QAction(_("quit"), menu)
         quit_action.triggered.connect(self._quit)
         menu.addAction(quit_action)
 
@@ -82,3 +84,7 @@ class TrayManager:
         self.pet.save_manager.save()
         self.tray.hide()
         self.app.quit()
+
+    def rebuild_menu(self):
+        self.tray.setToolTip(_("app_name"))
+        self._build_menu()

@@ -9,7 +9,14 @@ class IdleState(BaseState):
     """待机状态：随机触发走路，检测饥饿/疲劳阈值"""
 
     def on_enter(self):
-        self.ctx.animator.play("idle")
+        happiness = self.ctx.attributes.happiness
+        if happiness < 30:
+            anim = "idle_sad"
+        elif happiness > 70:
+            anim = "idle_happy"
+        else:
+            anim = "idle"
+        self.ctx.animator.play(anim)
         self._schedule_walk()
 
     def on_exit(self):

@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from config import HUNGER_DECAY, HAPPINESS_DECAY, ENERGY_DECAY, COIN_GAIN
+from i18n import _current_lang
 
 
 SAVE_FILE = Path(__file__).parent / "save.json"
@@ -19,6 +20,7 @@ class SaveManager:
         attrs = self.pet.attributes
         data = {
             "version": 1,
+            "language": _current_lang,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "pet": {
                 "x": self.pet.x(),

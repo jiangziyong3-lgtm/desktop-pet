@@ -34,3 +34,10 @@ PALETTE = {
     5: QColor("#555555"),       # 金属灰
     6: QColor("#ff4444"),       # 天线红
 }
+
+# 礼包码
+GIFT_CODES = {
+    "MAKEMERICH": 100,
+    "COINME": 50,
+    "IAMPOOR": 200,
+}

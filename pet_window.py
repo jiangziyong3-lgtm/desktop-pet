@@ -14,6 +14,7 @@ from animator import Animator
 from state_machine import StateMachine
 from attributes import Attributes
 from save_manager import SaveManager
+from i18n import _
 
 
 DRAG_THRESHOLD = 5
@@ -196,22 +197,32 @@ class PetWindow(QWidget):
             }
         """)
 
-        feed_action = QAction("喂食", self)
+        feed_action = QAction(_("feed"), self)
         feed_action.triggered.connect(self.feed_requested.emit)
         menu.addAction(feed_action)
 
-        sleep_action = QAction("睡觉", self)
+        sleep_action = QAction(_("sleep"), self)
         sleep_action.triggered.connect(self.sleep_requested.emit)
         menu.addAction(sleep_action)
 
         if self.state_machine.current == "sleep":
-            wake_action = QAction("唤醒", self)
+            wake_action = QAction(_("wake"), self)
             wake_action.triggered.connect(lambda: self.state_machine.transition_to("idle"))
             menu.addAction(wake_action)
 
         menu.addSeparator()
 
-        quit_action = QAction("退出", self)
+        gift_action = QAction(_("gift_code"), self)
+        gift_action.triggered.connect(self._open_gift_code)
+        menu.addAction(gift_action)
+
+        settings_action = QAction(_("settings"), self)
+        settings_action.triggered.connect(self._open_settings)
+        menu.addAction(settings_action)
+
+        menu.addSeparator()
+
+        quit_action = QAction(_("quit"), self)
         quit_action.triggered.connect(self._quit)
         menu.addAction(quit_action)
 
@@ -229,11 +240,39 @@ class PetWindow(QWidget):
         self.attributes.apply_item_effects(item)
         self.state_machine.transition_to("eat")
 
+    def _open_gift_code(self):
+        from PySide6.QtWidgets import QInputDialog
+        from config import GIFT_CODES
+        code, ok = QInputDialog.getText(self, _("gift_code_title"), _("gift_code_title"))
+        if ok and code:
+            code = code.strip().upper()
+            if code in GIFT_CODES:
+                amount = GIFT_CODES[code]
+                self.attributes.coins += amount
+                self.attributes.coins_changed.emit(self.attributes.coins)
+            else:
+                from PySide6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, _("gift_code"), _("gift_code_invalid"))
+
+    def _open_settings(self):
+        from settings_window import SettingsWindow
+        settings = SettingsWindow(self.attributes, self)
+        settings.language_changed.connect(self._on_language_changed)
+        settings.show()
+
+    def _on_language_changed(self, lang: str):
+        # 重建托盘菜单以应用新语言
+        self._rebuild_tray_menu()
+
+    def _rebuild_tray_menu(self):
+        if hasattr(self, "_tray") and self._tray:
+            self._tray.rebuild_menu()
+
     # ── 状态面板（鼠标中键） ──
 
     def _show_status(self):
         dialog = QDialog(self)
-        dialog.setWindowTitle("状态")
+        dialog.setWindowTitle(_("status"))
         dialog.setFixedSize(240, 200)
         dialog.setWindowFlags(
             Qt.WindowType.Dialog
@@ -258,12 +297,12 @@ class PetWindow(QWidget):
         layout = QVBoxLayout(dialog)
         layout.setSpacing(6)
 
-        layout.addWidget(QLabel(f"💰 金币: {int(self.attributes.coins)}"))
+        layout.addWidget(QLabel(f"💰 {_('coins')}: {int(self.attributes.coins)}"))
 
         for label, value, color in [
-            ("饱食度", self.attributes.hunger, "#ff8800"),
-            ("开心值", self.attributes.happiness, "#ff4488"),
-            ("精力值", self.attributes.energy, "#4488ff"),
+            (_("hunger"), self.attributes.hunger, "#ff8800"),
+            (_("happiness"), self.attributes.happiness, "#ff4488"),
+            (_("energy"), self.attributes.energy, "#4488ff"),
         ]:
             row = QHBoxLayout()
             name_label = QLabel(label)
@@ -277,7 +316,7 @@ class PetWindow(QWidget):
             row.addWidget(bar)
             layout.addLayout(row)
 
-        close_btn = QPushButton("关闭")
+        close_btn = QPushButton(_("close"))
         close_btn.clicked.connect(dialog.close)
         close_btn.setStyleSheet("""
             QPushButton {

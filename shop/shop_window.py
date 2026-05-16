@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 
 from shop.shop_data import ITEMS
+from i18n import _
 
 
 class ShopWindow(QDialog):
@@ -20,7 +21,7 @@ class ShopWindow(QDialog):
         self.attributes.coins_changed.connect(self._update_coins)
 
     def _setup_ui(self):
-        self.setWindowTitle("商店")
+        self.setWindowTitle(_("shop"))
         self.setFixedSize(460, 480)
         self.setWindowFlags(
             Qt.WindowType.Dialog
@@ -50,7 +51,7 @@ class ShopWindow(QDialog):
         layout.addLayout(grid)
 
         # 关闭按钮
-        close_btn = QPushButton("关闭")
+        close_btn = QPushButton(_("close"))
         close_btn.clicked.connect(self.close)
         layout.addWidget(close_btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
@@ -66,7 +67,8 @@ class ShopWindow(QDialog):
         header = QHBoxLayout()
         icon_label = QLabel(item["icon"])
         icon_label.setStyleSheet("font-size: 20px;")
-        name_label = QLabel(item["name"])
+        item_name = _(f"item_{item['id']}_name")
+        name_label = QLabel(item_name)
         name_label.setStyleSheet("font-weight: bold; font-size: 12px;")
         header.addWidget(icon_label)
         header.addWidget(name_label)
@@ -74,7 +76,8 @@ class ShopWindow(QDialog):
         card_layout.addLayout(header)
 
         # 描述
-        desc_label = QLabel(item["desc"])
+        item_desc = _(f"item_{item['id']}_desc")
+        desc_label = QLabel(item_desc)
         desc_label.setWordWrap(True)
         desc_label.setStyleSheet("color: #888; font-size: 10px;")
         card_layout.addWidget(desc_label)
@@ -82,12 +85,12 @@ class ShopWindow(QDialog):
         # 效果
         effects = []
         if item["hunger"]:
-            effects.append(f"饱食+{item['hunger']}")
+            effects.append(f"{_('hunger')}+{item['hunger']}")
         if item["happiness"]:
-            effects.append(f"开心+{item['happiness']}")
+            effects.append(f"{_('happiness')}+{item['happiness']}")
         if item["energy"]:
             v = item["energy"]
-            effects.append(f"精力{'+' if v > 0 else ''}{v}")
+            effects.append(f"{_('energy')}{'+' if v > 0 else ''}{v}")
 
         effect_label = QLabel(" | ".join(effects))
         effect_label.setStyleSheet("color: #aaa; font-size: 10px;")
@@ -100,7 +103,7 @@ class ShopWindow(QDialog):
         bottom.addWidget(price_label)
         bottom.addStretch()
 
-        buy_btn = QPushButton("购买并喂食")
+        buy_btn = QPushButton(_("buy_and_feed"))
         buy_btn.setFixedSize(100, 28)
         buy_btn.clicked.connect(lambda: self._buy_and_feed(item))
         bottom.addWidget(buy_btn)
@@ -116,7 +119,7 @@ class ShopWindow(QDialog):
             self.close()
 
     def _update_coins(self, coins: int):
-        self.coins_label.setText(f"💰 金币: {coins}")
+        self.coins_label.setText(f"💰 {_('coins')}: {coins}")
 
     def _setup_style(self):
         self.setStyleSheet("""

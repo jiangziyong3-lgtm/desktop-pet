@@ -22,9 +22,11 @@ Hangs out on top of your windows. Gets hungry. Falls asleep. Wanders around. Occ
 
 ## Features
 
-- **5 pixel animations** — idle (blink), walk, sleep (ZZZ), eat, happy (sparkle eyes)
+- **7 pixel animations** — idle (blink), idle-sad, idle-happy, walk, sleep (lying down + ZZZ), eat, happy (sparkle eyes)
+- **Mood-aware idle** — changes expression based on happiness: sad (<30), normal, sparkle-eyed (>70)
 - **FSM-driven behavior** — clean state machine with defined transitions
 - **System tray** — lives in your tray until you need it
+- **4-language UI** — Chinese / English / Japanese / Korean, switchable in settings
 - **Attribute system** — hunger / happiness / energy decay over time; passive coin income
 - **In-game shop** — spend coins on food to restore attributes
 - **Offline persistence** — auto-saves every 5 minutes, compensates for time away
@@ -56,16 +58,18 @@ python main.py
 ## Project layout
 
 ```
-main.py              → entry point
+main.py              → entry point + language init
 pet_window.py        → transparent window, drag, context menu, status panel
 state_machine.py     → finite state machine
 animator.py          → frame player (loop / one-shot)
 renderer.py          → per-pixel renderer with horizontal flip
-sprites.py           → 16×16 sprite data (palette-indexed)
+sprites.py           → 16×16 sprite data (palette-indexed, 7 animations)
 attributes.py        → attribute decay, coin income, critical thresholds
 save_manager.py      → JSON save + offline compensation
 tray.py              → system tray icon & menu
-config.py            → all tunable knobs (pixel size, decay rates, palette...)
+config.py            → all tunable knobs + gift codes
+i18n.py              → translation system (zh / en / ja / ko)
+settings_window.py   → settings dialog (language + gift code)
 states/              → state behaviors (idle, walk, sleep, eat, happy, drag)
 shop/                → shop ui & item definitions
 ```

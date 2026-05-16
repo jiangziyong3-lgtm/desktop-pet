@@ -1,0 +1,21 @@
+# 存档文件（含本地位置信息）
+save.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 虚拟环境
+venv/
+.venv/
+env/

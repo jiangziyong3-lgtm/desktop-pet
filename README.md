@@ -70,15 +70,6 @@ states/              → state behaviors (idle, walk, sleep, eat, happy, drag)
 shop/                → shop ui & item definitions
 ```
 
-## Roadmap
-
-- [ ] GIF screenshots in this README
-- [ ] More food items
-- [ ] Pet evolution / growth
-- [ ] Mood-based idle variations
-- [ ] Sound effects (muted by default)
-- [ ] Cross-platform packaging (`.exe`, `.app`, `.AppImage`)
-
 ## License
 
 MIT — do whatever, just don't be mean to the robot.
